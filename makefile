@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -O2 -fopenmp -mavx2 -mfma -mavx512f -msse 
+CFLAGS = -O3 -fopenmp -msse -mavx2 -mfma
 
 BUILD_DIR = build
 
