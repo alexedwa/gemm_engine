@@ -1,11 +1,6 @@
-#include <iostream>
-#include <cstring>
-#include <cstdint>
-#include <omp.h>
-
 #include "../main.hpp"
 
-void matmul_base(double* x, double* w, double* xout, int array_size){
+void baseline(double* x, double* w, double* xout, int array_size){
     for(int i = 0; i < array_size; ++i){
         for(int j = 0; j < array_size; ++j){
             double sum = 0.0f;
@@ -17,15 +12,15 @@ void matmul_base(double* x, double* w, double* xout, int array_size){
     }
 }
 
-void base(double* x, double* w, double* xout, int array_size, int registers, int reruns){
+void matmul_base(double* x, double* w, double* xout, int array_size, int registers, int reruns){
     double start, end;
 
     start = omp_get_wtime();
     for(int i = 0; i < reruns; ++i){
-        matmul_base(x, w, xout, array_size);
+        baseline(x, w, xout, array_size);
     }
     end = omp_get_wtime();
 
-    double flops = (2.0 * array_size * array_size * array_size) / ((end - start)*1e9);
-    std::cout << "Time Elapsed: " << (end - start) << "s\nArray size: " << array_size << "\nGFLOPS: " << flops << std::endl;
+    double flops = (2.0 * array_size * array_size * array_size * reruns) / ((end - start)*1e9);
+    std::cout << "Baseline Implementation\nTime Elapsed: " << (end - start) << "s\nArray size: " << array_size << "\nGFLOPS: " << flops << std::endl;
 }
