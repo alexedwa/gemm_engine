@@ -1,8 +1,3 @@
-#include <iostream>
-#include <cstring>
-#include <cstdint>
-#include <omp.h>
-
 #include "main.hpp"
 
 void initialise(double* x, double* w, int size) {
@@ -44,11 +39,8 @@ void gemm(int registers, int* cache_line[], int array_size, int reruns) {
     initialise(x, w, array_size);
     matmul_base(x, w, xout_check, array_size, registers, reruns);
 
-    initialise(x, w, array_size);
-    matmul_sse(x, w, xout, array_size, registers, reruns);
-
-    //initialise(x, w, array_size);
-    //matmul_avx2(x, w, xout, array_size, registers, reruns);
+    //matmul_sse(x, w, xout, array_size, registers, reruns);
+    matmul_avx2(x, w, xout, array_size, registers, reruns);
 
     correctness_check(xout, xout_check, array_size);
 
