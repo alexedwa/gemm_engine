@@ -1,7 +1,8 @@
+#include <emmintrin.h> // sse
 #include "../main.hpp"
 
-void sse(double* x, double* w, double* xout, int array_size){
-    __m128d v_sum, v_x, v_x2, v_x3, v_x4, v_w, v_w2, v_w3, v_w4;
+void sse_rb2(double* x, double* w, double* xout, int array_size){
+    __m128d v_sum, v_x, v_x2, v_w, v_w2;
 
     for(int i = 0; i < array_size; ++i){
 
@@ -50,10 +51,18 @@ void matmul_sse(double* x, double* w, double* xout, int array_size, int register
 
     start = omp_get_wtime();
     for(int i = 0; i < reruns; ++i){
-        sse(x, w, xout, array_size);
+        sse_rb2(x, w, xout, array_size);
     }
     end = omp_get_wtime();
 
+    double average_time = (end - start) / reruns;
     double flops = (2.0 * array_size * array_size * array_size * reruns) / ((end - start)*1e9);
-    std::cout << "SSE Intrinsics Implementation\nTime Elapsed: " << (end - start) << "s\nArray size: " << array_size << "\nGFLOPS: " << flops << std::endl;
+    std::cout << "===============================\n";
+    std::cout << "\e[1mSSE Intrinsics Implementation\e[0m\nTime Elapsed: " 
+    << "s\nAverage time: " << average_time << "s\n"
+    << "Array size: " << array_size 
+    << "\nGFLOPS: " << flops 
+    << std::endl;
+    std::cout << "===============================\n";
+
 }
