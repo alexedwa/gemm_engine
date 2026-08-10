@@ -1,3 +1,8 @@
+# Build executables and files
 *.exe
 *.out
 /build
+
+# Debug Logs
+*.out.*
+*.txt
