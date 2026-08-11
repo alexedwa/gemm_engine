@@ -68,8 +68,8 @@ void gemm(int registers, int array_size, int reruns) {
     initialise(x, w, array_size);
     matmul_base(x, w, xout_check, array_size, registers, reruns);
 
-    //matmul_sse(x, w, xout, array_size, registers, reruns);
-    matmul_avx2(x, w, xout, array_size, registers, cache_size, reruns);
+    matmul_sse(x, w, xout, array_size, registers, cache_size, reruns);
+    //matmul_avx2(x, w, xout, array_size, registers, cache_size, reruns);
 
     correctness_check(xout, xout_check, array_size);
 
