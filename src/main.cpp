@@ -66,7 +66,7 @@ void gemm(int registers, int array_size, int reruns) {
     //std::cout << "\nCache sizes (bytes): L1 Data: " << cache_size[1] << ", L2: " << cache_size[2] << ", L3: " << cache_size[3] << std::endl;
 
     initialise(x, w, array_size);
-    matmul_base(x, w, xout_check, array_size, registers, reruns);
+    matmul_unoptimised(x, w, xout_check, array_size, registers, reruns);
 
     matmul_sse(x, w, xout, array_size, registers, cache_size, reruns);
     //matmul_avx2(x, w, xout, array_size, registers, cache_size, reruns);

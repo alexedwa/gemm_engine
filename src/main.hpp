@@ -8,6 +8,7 @@
 
 // matmul implementations
 void matmul_base(double* x, double* w, double* xout, int array_size, int registers, int reruns);
+void matmul_unoptimised(double* x, double* w, double* xout, int array_size, int registers, int reruns);
 void matmul_sse(double* x, double* w, double* xout, int array_size, int registers, int cache_line[4], int reruns);
 void matmul_avx2(double* x, double* w, double* xout, int array_size, int registers, int cache_line[4], int reruns);
 

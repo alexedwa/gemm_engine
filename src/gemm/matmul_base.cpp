@@ -1,6 +1,6 @@
 #include "../main.hpp"
 
-void baseline(double* x, double* w, double* xout, int array_size){
+void matmul_scalar(double* x, double* w, double* xout, int array_size){
     for(int i = 0; i < array_size; ++i){
         for(int j = 0; j < array_size; ++j){
             double sum = 0.0f;
@@ -12,7 +12,7 @@ void baseline(double* x, double* w, double* xout, int array_size){
     }
 }
 
-void baseline_rb4(double* x, double* w, double* xout, int array_size){
+void matmul_scalar_rb4(double* x, double* w, double* xout, int array_size){
     for(int i = 0; i < array_size; ++i){
         int j = 0;
         for(; j < array_size; j+=4){ // rb incrementation
@@ -42,7 +42,7 @@ void baseline_rb4(double* x, double* w, double* xout, int array_size){
     }
 }
 
-void baseline_rb8(double* x, double* w, double* xout, int array_size){
+void matmul_scalar_rb8(double* x, double* w, double* xout, int array_size){
     for(int i = 0; i < array_size; ++i){
 
         int j = 0;
@@ -81,12 +81,12 @@ void baseline_rb8(double* x, double* w, double* xout, int array_size){
     }
 }
 
-void matmul_base(double* x, double* w, double* xout, int array_size, int registers, int reruns){
+void matmul_base_scalar(double* x, double* w, double* xout, int array_size, int registers, int reruns){
     double start, end;
 
     start = omp_get_wtime();
     for(int i = 0; i < reruns; ++i){
-        baseline(x, w, xout, array_size);
+        matmul_scalar_rb8(x, w, xout, array_size);
     }
     end = omp_get_wtime();
 
@@ -94,6 +94,26 @@ void matmul_base(double* x, double* w, double* xout, int array_size, int registe
     double flops = (2.0 * array_size * array_size * array_size) / (average_time * 1e9);
     std::cout << "===============================\n";
     std::cout << "\e[1mBaseline Implementation\e[0m\nTotal Time Elapsed: " << (end - start) 
+    << "s\nAverage time: " << average_time << "s\n"
+    << "Array size: " << array_size 
+    << "\nGFLOPS: " << flops 
+    << std::endl;
+    std::cout << "===============================\n";
+}
+
+void matmul_unoptimised(double* x, double* w, double* xout, int array_size, int registers, int reruns){
+        double start, end;
+
+    start = omp_get_wtime();
+    for(int i = 0; i < reruns; ++i){
+        matmul_scalar(x, w, xout, array_size);
+    }
+    end = omp_get_wtime();
+
+    double average_time = (end - start) / reruns;
+    double flops = (2.0 * array_size * array_size * array_size) / (average_time * 1e9);
+    std::cout << "===============================\n";
+    std::cout << "\e[1mUnoptimised Implementation\e[0m\nTotal Time Elapsed: " << (end - start) 
     << "s\nAverage time: " << average_time << "s\n"
     << "Array size: " << array_size 
     << "\nGFLOPS: " << flops 
