@@ -31,12 +31,11 @@ void correctness_check(double* xout, double* xout_check, int size) {
 }
 
 /* GETS CACHE SIZE
-* Index 0: L1 data cache size
-* Index 1: L1 instruction cache size
-* Index 2: L2 cache size
-* Index 3: L3 cache size
+* Index 0: L1 cache size
+* Index 1: L2 cache size
+* Index 2: L3 cache size
 */
-void get_cache_size(long long cache_size[4]) {
+void get_cache_size(int cache_size[4]) {
     for(int i = 0; i < 4; ++i){
         int cpuInfo[4] = {0};
         __cpuidex(cpuInfo, 4, i);
@@ -47,7 +46,7 @@ void get_cache_size(long long cache_size[4]) {
         int ways = ((cpuInfo[1] >> 22) & 0x3FF) + 1;
         int sets = cpuInfo[2] + 1;
 
-        long long total_bytes = ways * partitions * line_size * sets;
+        int total_bytes = ways * partitions * line_size * sets;
 
         cache_size[level] = total_bytes;
     }
@@ -60,19 +59,19 @@ void gemm(int registers, int array_size, int reruns) {
     double* xout = (double*)malloc(sizeof(double) * array_size * array_size);
     double* xout_check = (double*)malloc(sizeof(double) * array_size * array_size);
 
-    // L1 Data, L1 Instruction, L2, L3
-    long long cache_size[4]; 
+    //L1 Instruction, L1 Data, L2, L3
+    int cache_size[4]; 
     get_cache_size(cache_size);
 
-    std::cout << "Cache sizes (bytes): L1 Data: " << cache_size[1] << ", L1 Instruction: " << cache_size[0] << ", L2: " << cache_size[2] << ", L3: " << cache_size[3] << std::endl;
+    //std::cout << "\nCache sizes (bytes): L1 Data: " << cache_size[1] << ", L2: " << cache_size[2] << ", L3: " << cache_size[3] << std::endl;
 
-    //initialise(x, w, array_size);
-    //matmul_base(x, w, xout_check, array_size, registers, reruns);
+    initialise(x, w, array_size);
+    matmul_base(x, w, xout_check, array_size, registers, reruns);
 
     //matmul_sse(x, w, xout, array_size, registers, reruns);
-    //matmul_avx2(x, w, xout, array_size, registers, reruns);
+    matmul_avx2(x, w, xout, array_size, registers, cache_size, reruns);
 
-    //correctness_check(xout, xout_check, array_size);
+    correctness_check(xout, xout_check, array_size);
 
     free(x);
     free(w);
