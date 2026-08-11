@@ -1,3 +1,4 @@
+#include <intrin.h>
 #include "main.hpp"
 
 void initialise(double* x, double* w, int size) {
@@ -29,20 +30,49 @@ void correctness_check(double* xout, double* xout_check, int size) {
     std::cout << "Correctness check passed.\n" << std::endl;
 }
 
-void gemm(int registers, int* cache_line[], int array_size, int reruns) {
+/* GETS CACHE SIZE
+* Index 0: L1 data cache size
+* Index 1: L1 instruction cache size
+* Index 2: L2 cache size
+* Index 3: L3 cache size
+*/
+void get_cache_size(long long cache_size[4]) {
+    for(int i = 0; i < 4; ++i){
+        int cpuInfo[4] = {0};
+        __cpuidex(cpuInfo, 4, i);
+
+        int level = (cpuInfo[0] >> 5) & 0x7;
+        int line_size = (cpuInfo[1] & 0xFFF) + 1;
+        int partitions = ((cpuInfo[1] >> 12) & 0x3FF) + 1;
+        int ways = ((cpuInfo[1] >> 22) & 0x3FF) + 1;
+        int sets = cpuInfo[2] + 1;
+
+        long long total_bytes = ways * partitions * line_size * sets;
+
+        cache_size[level] = total_bytes;
+    }
+}
+
+void gemm(int registers, int array_size, int reruns) {
     // 2d matrices
     double* x = (double*)malloc(sizeof(double) * array_size * array_size);
     double* w = (double*)malloc(sizeof(double) * array_size * array_size);
     double* xout = (double*)malloc(sizeof(double) * array_size * array_size);
     double* xout_check = (double*)malloc(sizeof(double) * array_size * array_size);
 
-    initialise(x, w, array_size);
-    matmul_base(x, w, xout_check, array_size, registers, reruns);
+    // L1 Data, L1 Instruction, L2, L3
+    long long cache_size[4]; 
+    get_cache_size(cache_size);
+
+    std::cout << "Cache sizes (bytes): L1 Data: " << cache_size[1] << ", L1 Instruction: " << cache_size[0] << ", L2: " << cache_size[2] << ", L3: " << cache_size[3] << std::endl;
+
+    //initialise(x, w, array_size);
+    //matmul_base(x, w, xout_check, array_size, registers, reruns);
 
     //matmul_sse(x, w, xout, array_size, registers, reruns);
-    matmul_avx2(x, w, xout, array_size, registers, reruns);
+    //matmul_avx2(x, w, xout, array_size, registers, reruns);
 
-    correctness_check(xout, xout_check, array_size);
+    //correctness_check(xout, xout_check, array_size);
 
     free(x);
     free(w);
@@ -71,7 +101,7 @@ int main(int argc, char* argv[]) {
         i++;
     }
 
-    gemm(registers, nullptr, array_size, reruns);
+    gemm(registers, array_size, reruns);
 
     return 0;
 }
