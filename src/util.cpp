@@ -1,4 +1,4 @@
-#include <intrin.h>
+//#include <intrin.h>
 #include "main.hpp"
 
 void initialise(double* x, double* w, int size) {
@@ -36,6 +36,7 @@ void correctness_check(double* xout, double* xout_check, int size) {
 * Index 2: L3 cache size
 */
 void get_cache_size(int cache_size[4]) {
+    /*
     for(int i = 0; i < 4; ++i){
         int cpuInfo[4] = {0};
         __cpuidex(cpuInfo, 4, i);
@@ -50,4 +51,6 @@ void get_cache_size(int cache_size[4]) {
 
         cache_size[level] = total_bytes;
     }
+    */
+   cache_size[1] = 262144; // L1 cache size in bytes
 }

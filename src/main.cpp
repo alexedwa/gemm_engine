@@ -11,7 +11,7 @@ void gemm(int registers, int array_size, int reruns) {
     int cache_size[4]; 
     get_cache_size(cache_size);
 
-    //std::cout << "\nCache sizes (bytes): L1 Data: " << cache_size[1] << ", L2: " << cache_size[2] << ", L3: " << cache_size[3] << std::endl;
+    std::cout << "\nCache sizes (bytes): L1 Data: " << cache_size[1] << ", L2: " << cache_size[2] << ", L3: " << cache_size[3] << std::endl;
 
     initialise(x, w, array_size);
     matmul_unoptimised(x, w, xout_check, array_size, registers, reruns);
@@ -31,7 +31,7 @@ void gemm(int registers, int array_size, int reruns) {
 int main(int argc, char* argv[]) {
     int registers = 8; // baseline number of registers
     int reruns = 5; // baseline number of reruns
-    int array_size = 1024; // baseline array size
+    int array_size = 256; // baseline array size
 
     uint8_t i = 1;
     while(i < argc){

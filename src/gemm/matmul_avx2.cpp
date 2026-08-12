@@ -1,5 +1,53 @@
 #include <immintrin.h> // avx2
 #include "../main.hpp"
+/*
+reg = 1;
+v_reg = 4;
+*/
+
+void avx2_simd(double* x, double* w, double* xout, int array_size){
+    __m256d v_sum, v_x, v_w;
+
+    for(int i = 0; i < array_size; ++i){
+        
+        int j = 0;
+        for(; j < array_size; j += 4){
+            v_sum = _mm256_setzero_pd();
+
+            int k = 0;
+            for(; k < array_size; ++k){
+                v_x = _mm256_set1_pd(x[i * array_size + k]);
+                v_w = _mm256_loadu_pd(&w[k * array_size + j]);
+                v_sum = _mm256_fmadd_pd(v_x, v_w, v_sum);
+
+            }
+            // cleanup
+            double tail0 = 0.0, tail1 = 0.0, tail2 = 0.0, tail3 = 0.0;
+            for(; k < array_size; ++k){
+                tail0 += x[i * array_size + k] * w[k * array_size + j];
+                tail1 += x[i * array_size + k] * w[k * array_size + (j + 1)];
+                tail2 += x[i * array_size + k] * w[k * array_size + (j + 2)];
+                tail3 += x[i * array_size + k] * w[k * array_size + (j + 3)];
+            }
+
+            double packed[4];
+            _mm256_storeu_pd(packed, v_sum);
+            xout[i * array_size + j] = packed[0] + tail0;
+            xout[i * array_size + (j + 1)] = packed[1] + tail1;
+            xout[i * array_size + (j + 2)] = packed[2] + tail2;
+            xout[i * array_size + (j + 3)] = packed[3] + tail3;
+        }
+
+        // cleanup
+        for(; j < array_size; ++j){
+            double res = 0.0;
+            for(int k = 0; k < array_size; ++k){
+                res += x[i * array_size + k] * w[k * array_size + j];
+            }
+            xout[i * array_size + j] = res;
+        }
+    }
+}
 
 void avx2_rb3(double* x, double* w, double* xout, int array_size){
     __m256d v_sum, v_x, v_x2, v_x3, v_w, v_w2, v_w3; // 7 (14 registers used)
@@ -241,8 +289,8 @@ void avx2_rb8(double* x, double* w, double* xout, int array_size){
 
 void avx2_rb3_lt(double* x, double* w, double* xout, int array_size, int cache_line[4]){
     __m256d v_sum, v_x, v_x2, v_x3, v_w, v_w2, v_w3; // 7 (14 registers used)
-    int l1d_tile = cache_line[1] / (sizeof(double));
-
+    int l1d_tile = std::max(1, (int)std::sqrt(cache_line[1] / (3.0 * sizeof(double))));
+    //std::cout << l1d_tile << std::endl;
 
     for(int kk = 0; kk < array_size; kk += l1d_tile){
         for(int jj = 0; jj < array_size; jj += l1d_tile){
@@ -301,9 +349,12 @@ void avx2_rb3_lt(double* x, double* w, double* xout, int array_size, int cache_l
 
 void matmul_avx2(double* x, double* w, double* xout, int array_size, int registers, int cache_line[4], int reruns){
     double start, end;
+    
+    std::fill(xout, xout + array_size*array_size, 0.0);
 
     start = omp_get_wtime();
     for(int i = 0; i < reruns; ++i){
+        //avx2_simd(x, w, xout, array_size);
         //avx2_rb3(x, w, xout, array_size);
         avx2_rb3_lt(x, w, xout, array_size, cache_line);
     }

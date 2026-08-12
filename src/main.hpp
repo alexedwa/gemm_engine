@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstring>
 #include <cstdint>
+#include <cmath>
 #include <omp.h>
 
 // matmul implementations
