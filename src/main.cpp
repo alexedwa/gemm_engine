@@ -16,6 +16,7 @@ void gemm(int registers, int array_size, int reruns) {
     initialise(x, w, array_size);
     matmul_unoptimised(x, w, xout_check, array_size, registers, reruns);
 
+    //matmul_base_scalar(x, w, xout, array_size, registers, reruns);
     //matmul_sse(x, w, xout, array_size, registers, cache_size, reruns);
     matmul_avx2(x, w, xout, array_size, registers, cache_size, reruns);
 
