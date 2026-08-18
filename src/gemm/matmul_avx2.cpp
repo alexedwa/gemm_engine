@@ -440,7 +440,7 @@ void matmul_avx2(double* x, double* w, double* xout, int array_size, int registe
         //avx2_rb12_lt_l1(x, w, xout, array_size, cache_line); // t - 1024 most performant
         //avx2_rb12_lt_full(x, w, xout, array_size, cache_line);
 
-        avx2_rb12_lt_l1_omp(x, w, xout, array_size, cache_line);
+        avx2_rb12_lt_l1d_omp(x, w, xout, array_size, cache_line);
     }
     end = omp_get_wtime();
 
