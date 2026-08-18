@@ -11,6 +11,8 @@ void gemm(int registers, int array_size, int reruns) {
     int cache_size[4]; 
     get_cache_size(cache_size);
 
+    omp_set_num_threads(omp_get_max_threads());
+
     //std::cout << "\nCache sizes (bytes): L1 Data: " << cache_size[1] << ", L2: " << cache_size[2] << ", L3: " << cache_size[3] << std::endl;
 
     initialise(x, w, array_size);
