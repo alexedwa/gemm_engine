@@ -31,9 +31,9 @@ void correctness_check(double* xout, double* xout_check, int size) {
 }
 
 /* GETS CACHE SIZE
-* Index 0: L1 cache size
-* Index 1: L2 cache size
-* Index 2: L3 cache size
+* Index 1: L1d cache size
+* Index 2: L2 cache size
+* Index 3: L3 cache size
 */
 void get_cache_size(int cache_size[4]) {
     for(int i = 0; i < 4; ++i){
