@@ -2,9 +2,9 @@
 
 void gemm(int registers, int array_size, int reruns) {
     // 2d matrices
-    double* x = (double*)malloc(sizeof(double) * array_size * array_size);
-    double* w = (double*)malloc(sizeof(double) * array_size * array_size);
-    double* xout = (double*)malloc(sizeof(double) * array_size * array_size);
+    alignas(64) double* x = (double*)malloc(sizeof(double) * array_size * array_size);
+    alignas(64) double* w = (double*)malloc(sizeof(double) * array_size * array_size);
+    alignas(64) double* xout = (double*)malloc(sizeof(double) * array_size * array_size);
     double* xout_check = (double*)malloc(sizeof(double) * array_size * array_size);
 
     //L1 Instruction, L1 Data, L2, L3

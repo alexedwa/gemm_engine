@@ -14,8 +14,8 @@ void avx2_simd(double* x, double* w, double* xout, int array_size){
             v_x = _mm256_set1_pd(x[i * array_size + k]);
             int j = 0;
             for(; j + 3 < array_size; j += 4){
-                v_w = _mm256_loadu_pd(&w[k * array_size + j]);
-                v_xout = _mm256_loadu_pd(&xout[i * array_size + j]);
+                v_w = _mm256_load_pd(&w[k * array_size + j]);
+                v_xout = _mm256_load_pd(&xout[i * array_size + j]);
 
                 v_xout = _mm256_fmadd_pd(v_x, v_w, v_xout);
                 _mm256_storeu_pd(&xout[i * array_size + j], v_xout);
@@ -48,8 +48,8 @@ void avx2_rb4(double* x, double* w, double* xout, int array_size){
 
             int j = 0;
             for(; j + 3 < array_size; j += 4){
-                v_w = _mm256_loadu_pd(&w[k * array_size + j]);
-                v_xout = _mm256_loadu_pd(&xout[i * array_size + j]);
+                v_w = _mm256_load_pd(&w[k * array_size + j]);
+                v_xout = _mm256_load_pd(&xout[i * array_size + j]);
 
                 v_xout = _mm256_fmadd_pd(v_x, v_w, v_xout);
                 v_xout = _mm256_fmadd_pd(v_x2, v_w, v_xout);
@@ -89,8 +89,8 @@ void avx2_rb6(double* x, double* w, double* xout, int array_size){
 
             int j = 0;
             for(; j + 3 < array_size; j += 4){
-                v_w = _mm256_loadu_pd(&w[k * array_size + j]);
-                v_xout = _mm256_loadu_pd(&xout[i * array_size + j]);
+                v_w = _mm256_load_pd(&w[k * array_size + j]);
+                v_xout = _mm256_load_pd(&xout[i * array_size + j]);
 
                 v_xout = _mm256_fmadd_pd(v_x, v_w, v_xout);
                 v_xout = _mm256_fmadd_pd(v_x2, v_w, v_xout);
@@ -134,8 +134,8 @@ void avx2_rb8(double* x, double* w, double* xout, int array_size){
 
             int j = 0;
             for(; j + 3 < array_size; j += 4){
-                v_w = _mm256_loadu_pd(&w[k * array_size + j]);
-                v_xout = _mm256_loadu_pd(&xout[i * array_size + j]);
+                v_w = _mm256_load_pd(&w[k * array_size + j]);
+                v_xout = _mm256_load_pd(&xout[i * array_size + j]);
 
                 v_xout = _mm256_fmadd_pd(v_x, v_w, v_xout);
                 v_xout = _mm256_fmadd_pd(v_x2, v_w, v_xout);
@@ -185,8 +185,8 @@ void avx2_rb12(double* x, double* w, double* xout, int array_size){
 
             int j = 0;
             for(; j + 3 < array_size; j += 4){
-                v_w = _mm256_loadu_pd(&w[k * array_size + j]);
-                v_xout = _mm256_loadu_pd(&xout[i * array_size + j]);
+                v_w = _mm256_load_pd(&w[k * array_size + j]);
+                v_xout = _mm256_load_pd(&xout[i * array_size + j]);
 
                 v_xout = _mm256_fmadd_pd(v_x, v_w, v_xout);
                 v_xout = _mm256_fmadd_pd(v_x2, v_w, v_xout);
@@ -243,8 +243,8 @@ void avx2_rb16(double* x, double* w, double* xout, int array_size){
 
             int j = 0;
             for(; j + 3 < array_size; j += 4){
-                v_w = _mm256_loadu_pd(&w[k * array_size + j]);
-                v_xout = _mm256_loadu_pd(&xout[i * array_size + j]);
+                v_w = _mm256_load_pd(&w[k * array_size + j]);
+                v_xout = _mm256_load_pd(&xout[i * array_size + j]);
 
                 v_xout = _mm256_fmadd_pd(v_x, v_w, v_xout);
                 v_xout = _mm256_fmadd_pd(v_x2, v_w, v_xout);
@@ -312,8 +312,8 @@ void avx2_rb12_lt_l1d(double* x, double* w, double* xout, int array_size, int ca
 
                         int j = jj;
                         for(; j + 3 < std::min(jj + l1d_tile, array_size); j += 4){
-                            v_w = _mm256_loadu_pd(&w[k * array_size + j]);
-                            v_xout = _mm256_loadu_pd(&xout[i * array_size + j]);
+                            v_w = _mm256_load_pd(&w[k * array_size + j]);
+                            v_xout = _mm256_load_pd(&xout[i * array_size + j]);
 
                             v_xout = _mm256_fmadd_pd(v_x, v_w, v_xout);
                             v_xout = _mm256_fmadd_pd(v_x2, v_w, v_xout);
@@ -386,8 +386,8 @@ void avx2_rb12_lt_l1d_omp(double* x, double* w, double* xout, int array_size, in
 
                         int j = jj;
                         for(; j + 3 < std::min(jj + l1d_tile, array_size); j += 4){
-                            v_w = _mm256_loadu_pd(&w[k * array_size + j]);
-                            v_xout = _mm256_loadu_pd(&xout[i * array_size + j]);
+                            v_w = _mm256_load_pd(&w[k * array_size + j]);
+                            v_xout = _mm256_load_pd(&xout[i * array_size + j]);
 
                             v_xout = _mm256_fmadd_pd(v_x, v_w, v_xout);
                             v_xout = _mm256_fmadd_pd(v_x2, v_w, v_xout);
@@ -437,8 +437,7 @@ void matmul_avx2(double* x, double* w, double* xout, int array_size, int registe
         //avx2_rb12(x, w, xout, array_size); // most performant one
         //avx2_rb16(x, w, xout, array_size);
 
-        //avx2_rb12_lt_l1(x, w, xout, array_size, cache_line); // t - 1024 most performant
-        //avx2_rb12_lt_full(x, w, xout, array_size, cache_line);
+        //avx2_rb12_lt_l1d(x, w, xout, array_size, cache_line); // t - 1024 most performant
 
         avx2_rb12_lt_l1d_omp(x, w, xout, array_size, cache_line);
     }
