@@ -1,6 +1,6 @@
 #include "main.hpp"
 
-void gemm(int registers, int array_size, int reruns) {
+void gemm(int array_size, int reruns) {
     // 2d matrices
     alignas(64) double* x = (double*)malloc(sizeof(double) * array_size * array_size);
     alignas(64) double* w = (double*)malloc(sizeof(double) * array_size * array_size);
@@ -13,14 +13,13 @@ void gemm(int registers, int array_size, int reruns) {
 
     omp_set_num_threads(omp_get_max_threads());
 
-    //std::cout << "\nCache sizes (bytes): L1 Data: " << cache_size[1] << ", L2: " << cache_size[2] << ", L3: " << cache_size[3] << std::endl;
 
     initialise(x, w, array_size);
-    matmul_unoptimised(x, w, xout_check, array_size, registers, reruns);
+    matmul_unoptimised(x, w, xout_check, array_size, reruns);
 
     //matmul_base_scalar(x, w, xout, array_size, registers, reruns);
     //matmul_sse(x, w, xout, array_size, registers, cache_size, reruns);
-    matmul_avx2(x, w, xout, array_size, registers, cache_size, reruns);
+    matmul_avx2(x, w, xout, array_size, cache_size, reruns);
 
     correctness_check(xout, xout_check, array_size);
 
@@ -32,15 +31,11 @@ void gemm(int registers, int array_size, int reruns) {
 
 
 int main(int argc, char* argv[]) {
-    int registers = 8; // baseline number of registers
     int reruns = 5; // baseline number of reruns
     int array_size = 1024; // baseline array size
 
     uint8_t i = 1;
     while(i < argc){
-        if(strcmp(argv[i], "-r") == 0 && i + 1 < argc){
-            registers = std::atoi(argv[i + 1]);
-        }
         if(strcmp(argv[i], "-s") == 0 && i + 1 < argc){
             array_size = std::atoi(argv[i + 1]);
         }      
@@ -51,7 +46,7 @@ int main(int argc, char* argv[]) {
         i++;
     }
 
-    gemm(registers, array_size, reruns);
+    gemm(array_size, reruns);
 
     return 0;
 }

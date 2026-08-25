@@ -309,6 +309,8 @@ void avx2_rb12_lt_l1d(double* x, double* w, double* xout, int array_size, int ca
                         v_x11 = _mm256_set1_pd(x[i * array_size + (k + 10)]);
                         v_x12 = _mm256_set1_pd(x[i * array_size + (k + 11)]);
 
+                        _mm_prefetch(reinterpret_cast<const char*>(&w[k * array_size + jj]), _MM_HINT_T0);
+                        _mm_prefetch(reinterpret_cast<const char*>(&w[k * array_size + jj + 8]), _MM_HINT_T0);
 
                         int j = jj;
                         for(; j + 3 < std::min(jj + l1d_tile, array_size); j += 4){
@@ -362,7 +364,7 @@ void avx2_rb12_lt_l1d_omp(double* x, double* w, double* xout, int array_size, in
 
     memset(xout, 0, (size_t)array_size * array_size * sizeof(double));
     
-    #pragma omp for private(v_x, v_x2, v_x3, v_x4, v_x5, v_x6, v_x7, v_x8, v_x9, v_x10, v_x11, v_x12, v_w, v_xout) nowait schedule(dynamic)
+    #pragma omp for schedule(static)
     for(int kk = 0; kk < array_size; kk += l1d_tile){
         for(int jj = 0; jj < array_size; jj += l1d_tile){
             for(int ii = 0; ii < array_size; ii += l1d_tile){
@@ -424,7 +426,7 @@ void avx2_rb12_lt_l1d_omp(double* x, double* w, double* xout, int array_size, in
     }
 }
 
-void matmul_avx2(double* x, double* w, double* xout, int array_size, int registers, int cache_line[4], int reruns){
+void matmul_avx2(double* x, double* w, double* xout, int array_size, int cache_line[4], int reruns){
     double start, end;
 
     start = omp_get_wtime();
@@ -437,9 +439,9 @@ void matmul_avx2(double* x, double* w, double* xout, int array_size, int registe
         //avx2_rb12(x, w, xout, array_size); // most performant one
         //avx2_rb16(x, w, xout, array_size);
 
-        //avx2_rb12_lt_l1d(x, w, xout, array_size, cache_line); // t - 1024 most performant
+        avx2_rb12_lt_l1d(x, w, xout, array_size, cache_line); // t - 1024 most performant
 
-        avx2_rb12_lt_l1d_omp(x, w, xout, array_size, cache_line);
+        //avx2_rb12_lt_l1d_omp(x, w, xout, array_size, cache_line);
     }
     end = omp_get_wtime();
 

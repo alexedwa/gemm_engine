@@ -326,7 +326,7 @@ void sse_rb8_lt_l1d(double* x, double* w, double* xout, int array_size, int cach
     }
 }
 
-void matmul_sse(double* x, double* w, double* xout, int array_size, int registers, int cache_line[4], int reruns){
+void matmul_sse(double* x, double* w, double* xout, int array_size, int cache_line[4], int reruns){
     double start, end;
 
     start = omp_get_wtime();

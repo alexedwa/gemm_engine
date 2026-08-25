@@ -81,7 +81,7 @@ void matmul_scalar_rb8(double* x, double* w, double* xout, int array_size){
     }
 }
 
-void matmul_base_scalar(double* x, double* w, double* xout, int array_size, int registers, int reruns){
+void matmul_base_scalar(double* x, double* w, double* xout, int array_size, int reruns){
     double start, end;
 
     start = omp_get_wtime();
@@ -101,7 +101,7 @@ void matmul_base_scalar(double* x, double* w, double* xout, int array_size, int 
     std::cout << "===============================\n";
 }
 
-void matmul_unoptimised(double* x, double* w, double* xout, int array_size, int registers, int reruns){
+void matmul_unoptimised(double* x, double* w, double* xout, int array_size, int reruns){
         double start, end;
 
     start = omp_get_wtime();
