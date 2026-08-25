@@ -359,14 +359,12 @@ void avx2_rb12_lt_l1d(double* x, double* w, double* xout, int array_size, int ca
     OMP IMPLEMENTATIONS
 */
 void avx2_rb12_lt_l1d_omp(double* x, double* w, double* xout, int array_size, int cache_line[4]){
-    #pragma omp parallel
-    {
     __m256d v_x, v_x2, v_x3, v_x4, v_x5, v_x6, v_x7, v_x8, v_x9, v_x10, v_x11, v_x12, v_w, v_xout; // 14 (28 * 2 registers used)
     int l1d_tile = cache_line[1] / (sizeof(double) * 4);
 
     memset(xout, 0, (size_t)array_size * array_size * sizeof(double));
     
-    #pragma omp for schedule(static)
+    #pragma omp parallel for private(v_x, v_x2, v_x3, v_x4, v_x5, v_x6, v_x7, v_x8, v_x9, v_x10, v_x11, v_x12, v_w, v_xout) schedule(dynamic)
     for(int kk = 0; kk < array_size; kk += l1d_tile){
         for(int jj = 0; jj < array_size; jj += l1d_tile){
             for(int ii = 0; ii < array_size; ii += l1d_tile){
@@ -425,7 +423,6 @@ void avx2_rb12_lt_l1d_omp(double* x, double* w, double* xout, int array_size, in
             }
         }
     }
-    }
 }
 
 void matmul_avx2(double* x, double* w, double* xout, int array_size, int cache_line[4], int reruns){
@@ -441,9 +438,9 @@ void matmul_avx2(double* x, double* w, double* xout, int array_size, int cache_l
         //avx2_rb12(x, w, xout, array_size); // most performant one
         //avx2_rb16(x, w, xout, array_size);
 
-        avx2_rb12_lt_l1d(x, w, xout, array_size, cache_line); // t - 1024 most performant
+        //avx2_rb12_lt_l1d(x, w, xout, array_size, cache_line); // t - 1024 most performant
 
-        //avx2_rb12_lt_l1d_omp(x, w, xout, array_size, cache_line);
+        avx2_rb12_lt_l1d_omp(x, w, xout, array_size, cache_line);
     }
     end = omp_get_wtime();
 
