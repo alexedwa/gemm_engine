@@ -308,10 +308,12 @@ void avx2_rb12_lt_l1d(double* x, double* w, double* xout, int array_size, int ca
                         v_x10 = _mm256_set1_pd(x[i * array_size + (k + 9)]);
                         v_x11 = _mm256_set1_pd(x[i * array_size + (k + 10)]);
                         v_x12 = _mm256_set1_pd(x[i * array_size + (k + 11)]);
-
-                        _mm_prefetch(reinterpret_cast<const char*>(&w[k * array_size + jj]), _MM_HINT_T0);
-                        _mm_prefetch(reinterpret_cast<const char*>(&w[k * array_size + jj + 8]), _MM_HINT_T0);
-
+                        
+                        if (k + 24 < array_size){
+                            _mm_prefetch(reinterpret_cast<const char*>(&w[(k + 12) * array_size + jj]), _MM_HINT_T0);
+                            _mm_prefetch(reinterpret_cast<const char*>(&w[(k + 12) * array_size + jj + 8]), _MM_HINT_T0);
+                        }
+                        
                         int j = jj;
                         for(; j + 3 < std::min(jj + l1d_tile, array_size); j += 4){
                             v_w = _mm256_load_pd(&w[k * array_size + j]);
